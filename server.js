@@ -50,7 +50,7 @@ io.on("connection", (socket) => {
     socket.leave(socket.room);
     // join new room, received as function parameter
     socket.join(newroom);
-    socket.emit("updateChat", "SERVER", "you have connected to " + newroom);
+    socket.emit("switchRoomSuccess", "You have connected to " + newroom);
     // sent message to OLD room
     socket.broadcast
       .to(socket.room)
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
     socket.broadcast
       .to(newroom)
       .emit(
-        "updateChat",
+        "userJoined",
         socket.username,
         socket.username + " has joined this room"
       );
@@ -83,6 +83,11 @@ io.on("connection", (socket) => {
   socket.on("requestCurrentQuestion", () => {
     console.log("client requesting question");
     socket.broadcast.to(socket.room).emit("sendNewQuestion");
+  });
+
+  socket.on("sendingQuestion", (question) => {
+    console.log("client sending question", question);
+    socket.broadcast.to(socket.room).emit("receiveQuestion", question);
   });
 
   socket.on("updateCurrentQuestion", (questionObject) => {
