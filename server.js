@@ -7,7 +7,7 @@ const io = require("socket.io")(http, {
 });
 const cors = require("cors");
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.get("/", (req, res) => {
