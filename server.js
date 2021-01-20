@@ -50,13 +50,17 @@ io.on("connection", (socket) => {
     socket.leave(socket.room);
     // join new room, received as function parameter
     socket.join(newroom);
-    socket.emit("switchRoomSuccess", "You have connected to " + newroom);
+    socket.emit(
+      "switchRoomSuccess",
+      newroom,
+      "You have connected to " + newroom
+    );
     // sent message to OLD room
     socket.broadcast
       .to(socket.room)
       .emit(
-        "updateChat",
-        socket.username,
+        "userLeft",
+        { name: socket.username, id: socket.id },
         socket.username + " has left this room"
       );
     // update socket session room title
@@ -65,7 +69,7 @@ io.on("connection", (socket) => {
       .to(newroom)
       .emit(
         "userJoined",
-        socket.username,
+        { name: socket.username, id: socket.id },
         socket.username + " has joined this room"
       );
     socket.emit("updaterooms", rooms, newroom);
